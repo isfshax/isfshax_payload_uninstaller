@@ -30,7 +30,7 @@
 lolserial_print:
     mov r1, #-1
 lolserial_lprint:
-    push {r5-r6}
+    push {r4-r6}
     add r1, r1, r0
 
     ldr r6, =0x0D800000
@@ -90,5 +90,5 @@ lolserial_lprint:
         b lolserial_send_string_loop
     lolserial_send_string_end:
 
-    pop {r5-r6}
+    pop {r4-r6}
     bx lr
