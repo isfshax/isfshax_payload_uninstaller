@@ -24,8 +24,16 @@
  */
 
 .equ LOLSERIAL_WAIT_TICKS, 200
-.equ GP_SENSORBAR, 0x00000100
-.equ GP_SENSORBAR_SHIFT, 8
+
+.if 1
+/* GP_SENSORBAR */
+.equ LOLSERIAL_PIN, 0x00000100
+.equ LOLSERIAL_PIN_SHIFT, 8
+.else
+/* GP_DEBUG0 */
+.equ LOLSERIAL_PIN, 0x00010000
+.equ LOLSERIAL_PIN_SHIFT, 16
+.endif
 
 lolserial_print:
     mov r1, #-1
@@ -35,24 +43,24 @@ lolserial_lprint:
 
     ldr r6, =0x0D800000
 
-    /* clear32(LT_GPIO_OWNER, GP_SENSORBAR) */
+    /* clear32(LT_GPIO_OWNER, LOLSERIAL_PIN) */
     ldr r5, [r6, #0x0FC]
-    bic r5, r5, #GP_SENSORBAR
+    bic r5, r5, #LOLSERIAL_PIN
     str r5, [r6, #0x0FC]
 
-    /* set32(LT_GPIO_ENABLE, GP_SENSORBAR) */
+    /* set32(LT_GPIO_ENABLE, LOLSERIAL_PIN) */
     ldr r5, [r6, #0x0DC]
-    orr r5, r5, #GP_SENSORBAR
+    orr r5, r5, #LOLSERIAL_PIN
     str r5, [r6, #0x0DC]
 
-    /* set32(LT_GPIO_DIR, GP_SENSORBAR) */
+    /* set32(LT_GPIO_DIR, LOLSERIAL_PIN) */
     ldr r5, [r6, #0x0E4]
-    orr r5, r5, #GP_SENSORBAR
+    orr r5, r5, #LOLSERIAL_PIN
     str r5, [r6, #0x0E4]
 
-    /* set32(LT_GPIO_OUT, GP_SENSORBAR) */
+    /* set32(LT_GPIO_OUT, LOLSERIAL_PIN) */
     ldr r5, [r6, #0x0E0]
-    orr r5, r5, #GP_SENSORBAR
+    orr r5, r5, #LOLSERIAL_PIN
     str r5, [r6, #0x0E0]
 
     lolserial_send_string_loop:
@@ -68,8 +76,8 @@ lolserial_lprint:
             and r4, r3, #1
 
             ldr r5, [r6, #0x0E0]
-            bic r5, r5, #GP_SENSORBAR
-            orr r5, r5, r4, lsl #GP_SENSORBAR_SHIFT
+            bic r5, r5, #LOLSERIAL_PIN
+            orr r5, r5, r4, lsl #LOLSERIAL_PIN_SHIFT
             str r5, [r6, #0x0E0]
 
             ldr r5, [r6, #0x010]
